@@ -32,9 +32,9 @@ where a file is how one that outlasts the moment is.
   It has no position and no selves,
   so anything positional is wrapped in `execute at` or `execute as`,
   and anything else silently addresses a spot no player is standing on.
-- **Nothing comes back:**
-  A command's output goes to the log and not to `mcfn`,
-  so it cannot answer a question, only cause an effect.
+- **The reply is whatever the server logged:**
+  A question is asked by running the command that answers it,
+  and one that logs nothing comes back empty after a short wait.
 - **What it does is not in this repository:**
   A summoned entity or a granted effect survives a revert and a reload alike,
   and is undone by another command or not at all.
