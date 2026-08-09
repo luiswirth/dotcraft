@@ -22,6 +22,23 @@ See the README for the layout and for what the chat prefixes mean.
   Players are connected while a reload happens,
   so a function that assumes it runs from a fresh world will not.
 
+## Acting live
+
+`mcfn <command>` sends one line to the server console.
+It is how a request that acts on the world right now is answered,
+where a file is how one that outlasts the moment is.
+
+- **The console is the server, standing at the world origin:**
+  It has no position and no selves,
+  so anything positional is wrapped in `execute at` or `execute as`,
+  and anything else silently addresses a spot no player is standing on.
+- **Nothing comes back:**
+  A command's output goes to the log and not to `mcfn`,
+  so it cannot answer a question, only cause an effect.
+- **What it does is not in this repository:**
+  A summoned entity or a granted effect survives a revert and a reload alike,
+  and is undone by another command or not at all.
+
 ## Verifying
 
 `/reload` applies a change and reports a failed function in chat.
