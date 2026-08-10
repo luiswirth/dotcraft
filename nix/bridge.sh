@@ -15,6 +15,12 @@ session="$STATE_DIRECTORY/session"
 # outlives the bound, so the next turn picks a cut one up where it stopped.
 turn_timeout=600
 
+# A request that has produced nothing has not started, and waiting on one costs
+# minutes where sending it again costs seconds. Everything before the first
+# token is the server, so abandoning there runs no tool and writes no file.
+stall_timeout=15
+first_token='"type":"message_start"'
+
 # The line is matched from its start rather than searched for. A message
 # carrying its own "]: <someop>" would otherwise name whoever it likes, and the
 # player name is what decides privilege. A server that could not reach Mojang
@@ -58,12 +64,45 @@ your turn. Say what changed and how to try it.
 EOF
 }
 
+# One request, run for as long as it looks alive. The exit status separates the
+# two failures a caller can act on differently: 2 is a request that never
+# started and can be sent again, anything else is a turn that ran and failed.
+attempt() {
+  local stream=$1 prompt_file=$2
+  shift 2
+  local pid waited=0 status=0
+
+  timeout "$turn_timeout" "$CLAUDE_BIN" "$@" <"$prompt_file" >"$stream" 2>/dev/null &
+  pid=$!
+
+  until grep --quiet "$first_token" "$stream" 2>/dev/null; do
+    kill -0 "$pid" 2>/dev/null || break
+    if [ "$waited" -ge "$stall_timeout" ]; then
+      kill "$pid" 2>/dev/null
+      wait "$pid" 2>/dev/null || true
+      return 2
+    fi
+    sleep 1
+    waited=$((waited + 1))
+  done
+
+  wait "$pid" || status=$?
+  [ "$status" -eq 0 ] || return "$status"
+
+  jq --exit-status --raw-output \
+    'select(.type == "result" and (.is_error | not)) | .result' "$stream"
+}
+
 claude_turn() {
   local player=$1 prompt=$2
-  local id output
+  local id
   local -a options=(
     --print
-    --output-format json
+    # Streaming is what makes a stalled request visible: a turn that has not
+    # reached its first token in seconds is one that will not answer in minutes.
+    --output-format stream-json
+    --verbose
+    --include-partial-messages
     --append-system-prompt "$(system_prompt "$player")"
     # Chat is a terminal here, so a turn runs under the profile and policy a
     # terminal session would. claude/managed-settings.json in dotnix is where a
@@ -83,16 +122,25 @@ claude_turn() {
     options+=(--session-id "$id")
   fi
 
-  # The prompt goes in over stdin: as an argument, a message opening with a
-  # dash would be read as a flag.
-  local status=0
-  output=$(printf '%s' "$prompt" |
-    timeout "$turn_timeout" "$CLAUDE_BIN" "${options[@]}") || status=$?
+  # The prompt goes in over a file rather than an argument: a message opening
+  # with a dash would be read as a flag.
+  local stream prompt_file status=0
+  stream=$(mktemp)
+  prompt_file=$(mktemp)
+  printf '%s' "$prompt" >"$prompt_file"
+
+  attempt "$stream" "$prompt_file" "${options[@]}" || status=$?
+  if [ "$status" -eq 2 ]; then
+    tell gray "restarting"
+    : >"$stream"
+    status=0
+    attempt "$stream" "$prompt_file" "${options[@]}" || status=$?
+  fi
+
+  rm --force "$stream" "$prompt_file"
   # timeout's own exit code, passed through so that the wait and the failure
   # read differently in chat.
-  [ "$status" -eq 0 ] || return "$status"
-
-  jq --exit-status --raw-output 'select(.is_error | not) | .result' <<<"$output"
+  return "$status"
 }
 
 # The bridge commits, pushes and reloads, not the model: the commit is what
@@ -137,6 +185,10 @@ handle() {
   reply=$(claude_turn "$player" "$prompt") || status=$?
   case $status in
     0) ;;
+    2)
+      tell red "no first token twice over, ask again"
+      return
+      ;;
     124)
       tell red "still going after ${turn_timeout}s, ask again to pick it up"
       return
