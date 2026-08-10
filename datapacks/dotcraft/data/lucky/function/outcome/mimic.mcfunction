@@ -1,0 +1,3 @@
+summon zombie ~1 ~ ~1 {PersistenceRequired:1b,CustomName:{"text":"the Mimic","color":"dark_purple"},CustomNameVisible:1b,Attributes:[{id:"minecraft:max_health",base:40},{id:"minecraft:movement_speed",base:0.3}],Health:40f,HandItems:[{id:"minecraft:diamond_axe",count:1,components:{"minecraft:enchantments":{sharpness:3}}},{}],ArmorItems:[{id:"minecraft:chainmail_boots",count:1},{id:"minecraft:chainmail_leggings",count:1},{id:"minecraft:chainmail_chestplate",count:1},{id:"minecraft:chest",count:1}],HandDropChances:[1.0f,0.0f]}
+particle minecraft:squid_ink ~ ~1 ~ 0.6 0.6 0.6 0.05 80
+playsound minecraft:entity.elder_guardian.curse master @s ~ ~ ~ 1 0.8
