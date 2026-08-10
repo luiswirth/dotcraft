@@ -1,6 +1,8 @@
 execute store result score @s surprise.timer run random value 900..4800
 
-execute store result score #s surprise.roll run random value 1..8
+execute store result score #s surprise.roll run random value 1..10
+execute if score #s surprise.roll matches 9.. run function surprise:event/chaos
+execute if score #s surprise.roll matches 9.. run scoreboard players set #s surprise.roll 0
 execute if score #s surprise.roll matches 1 run function surprise:event/blessing
 execute if score #s surprise.roll matches 2 run function surprise:event/companion
 execute if score #s surprise.roll matches 3 run function surprise:event/gift
