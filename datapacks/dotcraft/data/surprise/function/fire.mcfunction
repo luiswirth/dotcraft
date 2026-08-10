@@ -1,4 +1,4 @@
-execute store result score @s surprise.timer run random value 900..4800
+execute store result score @s surprise.timer run random value 60..240
 
 execute store result score #s surprise.roll run random value 1..10
 execute if score #s surprise.roll matches 9.. run function surprise:event/chaos
