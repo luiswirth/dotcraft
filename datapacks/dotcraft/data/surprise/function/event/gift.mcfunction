@@ -15,4 +15,6 @@ execute if score #g surprise.roll matches 11 run data modify storage surprise:ct
 execute if score #g surprise.roll matches 12 run data modify storage surprise:ctx gift.id set value "minecraft:echo_shard"
 
 function surprise:apply/gift with storage surprise:ctx gift
-particle minecraft:totem_of_undying ~ ~1 ~ 0.4 0.6 0.4 0.2 40
+particle minecraft:totem_of_undying ~ ~1 ~ 0.6 1 0.6 0.3 120
+playsound minecraft:entity.item.pickup master @s ~ ~ ~ 1 1.2
+title @s actionbar {"text":"a gift","color":"gold"}

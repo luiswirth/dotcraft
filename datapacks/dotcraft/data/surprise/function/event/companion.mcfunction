@@ -14,4 +14,5 @@ execute if score #m surprise.roll matches 9 run data modify storage surprise:ctx
 execute if score #m surprise.roll matches 10 run data modify storage surprise:ctx mob.id set value "minecraft:snow_golem"
 
 function surprise:apply/mob with storage surprise:ctx mob
-playsound minecraft:entity.allay.item_given master @s ~ ~ ~ 0.6 1
+playsound minecraft:entity.allay.item_given master @s ~ ~ ~ 1 1
+title @s actionbar {"text":"company","color":"aqua"}

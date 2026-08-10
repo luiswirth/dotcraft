@@ -14,5 +14,6 @@ execute if score #e surprise.roll matches 9 run data modify storage surprise:ctx
 execute if score #e surprise.roll matches 10 run data modify storage surprise:ctx effect.id set value "minecraft:luck"
 
 function surprise:apply/effect with storage surprise:ctx effect
-particle minecraft:happy_villager ~ ~1 ~ 0.6 1 0.6 0.1 40
-playsound minecraft:block.amethyst_block.chime master @s ~ ~ ~ 0.6 1.4
+particle minecraft:happy_villager ~ ~1 ~ 1 1.5 1 0.2 120
+playsound minecraft:block.amethyst_block.chime master @s ~ ~ ~ 1 1.4
+title @s actionbar {"text":"a blessing","color":"green"}
