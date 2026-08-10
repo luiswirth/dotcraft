@@ -30,4 +30,7 @@ Backing one out is `git revert` and another reload.
     datapacks/<name>/    a datapack, loaded by the world under file/<name>
     nix/                 the NixOS module: the server, the bridge, mcfn
 
+Everything belonging to this server lives here, one directory per concern,
+so a datapack, a plugin and a bot are siblings rather than repositories of their own.
+
 `/datapack list` in game shows what the world has actually enabled.
