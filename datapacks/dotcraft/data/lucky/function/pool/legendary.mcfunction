@@ -1,0 +1,6 @@
+scoreboard players set @s lucky.luck 0
+execute store result score #pick lucky.roll run random value 1..4
+execute if score #pick lucky.roll matches 1 run function lucky:outcome/jackpot
+execute if score #pick lucky.roll matches 2 run function lucky:outcome/vault
+execute if score #pick lucky.roll matches 3 run function lucky:outcome/wish
+execute if score #pick lucky.roll matches 4 run function lucky:outcome/constellation

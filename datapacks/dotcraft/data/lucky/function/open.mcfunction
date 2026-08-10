@@ -1,29 +1,16 @@
-execute store result score #roll lucky.roll run random value 1..28
-execute if score #roll lucky.roll matches 1 run function lucky:outcome/allay
-execute if score #roll lucky.roll matches 2 run function lucky:outcome/anvils
-execute if score #roll lucky.roll matches 3 run function lucky:outcome/bees
-execute if score #roll lucky.roll matches 4 run function lucky:outcome/blink
-execute if score #roll lucky.roll matches 5 run function lucky:outcome/boss
-execute if score #roll lucky.roll matches 6 run function lucky:outcome/bounce
-execute if score #roll lucky.roll matches 7 run function lucky:outcome/cake
-execute if score #roll lucky.roll matches 8 run function lucky:outcome/cats
-execute if score #roll lucky.roll matches 9 run function lucky:outcome/charged
-execute if score #roll lucky.roll matches 10 run function lucky:outcome/chickens
-execute if score #roll lucky.roll matches 11 run function lucky:outcome/curse
-execute if score #roll lucky.roll matches 12 run function lucky:outcome/disc
-execute if score #roll lucky.roll matches 13 run function lucky:outcome/enderparty
-execute if score #roll lucky.roll matches 14 run function lucky:outcome/flight
-execute if score #roll lucky.roll matches 15 run function lucky:outcome/ghost
-execute if score #roll lucky.roll matches 16 run function lucky:outcome/grow
-execute if score #roll lucky.roll matches 17 run function lucky:outcome/jackpot
-execute if score #roll lucky.roll matches 18 run function lucky:outcome/jockey
-execute if score #roll lucky.roll matches 19 run function lucky:outcome/lavaspring
-execute if score #roll lucky.roll matches 20 run function lucky:outcome/liftoff
-execute if score #roll lucky.roll matches 21 run function lucky:outcome/market
-execute if score #roll lucky.roll matches 22 run function lucky:outcome/shrink
-execute if score #roll lucky.roll matches 23 run function lucky:outcome/steed
-execute if score #roll lucky.roll matches 24 run function lucky:outcome/storm
-execute if score #roll lucky.roll matches 25 run function lucky:outcome/trapped
-execute if score #roll lucky.roll matches 26 run function lucky:outcome/treasure
-execute if score #roll lucky.roll matches 27 run function lucky:outcome/warden
-execute if score #roll lucky.roll matches 28 run function lucky:outcome/wolves
+scoreboard players add @s lucky.opened 1
+function lucky:milestone
+
+# lucky.luck is a pity counter: a bad outcome raises it, a good one spends it,
+# so a run of misfortune bends the next roll upward.
+execute store result score #roll lucky.roll run random value 1..100
+scoreboard players operation #roll lucky.roll += @s lucky.luck
+
+execute if score #roll lucky.roll matches ..26 run function lucky:pool/cursed
+execute if score #roll lucky.roll matches 27..70 run function lucky:pool/common
+execute if score #roll lucky.roll matches 71..93 run function lucky:pool/rare
+execute if score #roll lucky.roll matches 94.. run function lucky:pool/legendary
+
+# the pity counter stays bounded, so neither luck nor misfortune compounds forever.
+execute if score @s lucky.luck matches 41.. run scoreboard players set @s lucky.luck 40
+execute if score @s lucky.luck matches ..-11 run scoreboard players set @s lucky.luck -10
