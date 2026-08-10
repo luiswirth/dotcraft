@@ -1,12 +1,13 @@
 # dotcraft
 
-Content for a private Minecraft server:
-the datapacks its world loads, and the history of how they got that way.
+A private Minecraft server:
+the datapacks its world loads, the history of how they got that way,
+and the NixOS module that runs the whole thing.
 
-The server itself is declared in [dotnix](https://github.com/luiswirth/dotnix),
-which runs Paper, symlinks `datapacks/` into the world,
+The module runs Paper, symlinks `datapacks/` into the world,
 and runs the bridge that puts Claude in the server's chat.
-This repository is the checkout that bridge edits, at `/srv/dotcraft` on the host.
+[dotnix](https://github.com/luiswirth/dotnix) imports it and names the host it runs on.
+This repository is also the checkout that bridge edits, at `/srv/dotcraft` there.
 
 ## Chat
 
@@ -27,5 +28,6 @@ Backing one out is `git revert` and another reload.
 ## Layout
 
     datapacks/<name>/    a datapack, loaded by the world under file/<name>
+    nix/                 the NixOS module: the server, the bridge, mcfn
 
 `/datapack list` in game shows what the world has actually enabled.

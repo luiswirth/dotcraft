@@ -1,10 +1,15 @@
 # dotcraft
 
-Datapacks for a private Minecraft server, edited from the server's own chat.
+A private Minecraft server: its datapacks, edited from the server's own chat,
+and the NixOS module in `nix/` that runs the server and the bridge doing the editing.
 See the README for the layout and for what the chat prefixes mean.
 
 ## Invariants
 
+- **A datapack reloads, `nix/` deploys:**
+  A change under `datapacks/` is live as soon as the server reloads,
+  while one under `nix/` reaches the host only once dotnix bumps its lock and deploys.
+  Never answer a chat request with a change the server has to be rebuilt to see.
 - **Datapacks first, then a Paper plugin, and a mod last:**
   A datapack reloads in place and needs nothing of the client,
   a plugin costs a restart, and a mod costs every player an install.
