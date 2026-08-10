@@ -1,3 +1,2 @@
-summon item ~ ~1 ~ {Item:{id:"minecraft:diamond",count:5}}
-summon item ~ ~1 ~ {Item:{id:"minecraft:golden_apple",count:1}}
-playsound minecraft:entity.player.levelup master @s
+loot spawn ~ ~1 ~ loot minecraft:chests/buried_treasure
+loot spawn ~ ~1 ~ loot minecraft:chests/shipwreck_treasure
