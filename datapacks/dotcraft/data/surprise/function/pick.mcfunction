@@ -1,49 +1,49 @@
 # One table for every event, whatever set it up: a mined block or the clock.
 execute store result score #pick surprise.roll run random value 1..44
-execute if score #pick surprise.roll matches 1 run data modify storage surprise:ctx pulse.name set value "alchemy
-anglers
-armory
-ascension
-beacon
-blessing
-bloom
-caravan
-chaos
-citadel
-companion
-creeperain
-deepfreeze
-excavation
-fireworkshow
-forge
-gateway
-gift
-goldrush
-greenhouse
-guardian
-infestation
-jukebox
-meteor
-mimic
-monument
-pedestal
-phantoms
-quicksand
-scatter
-shower
-shrink
-siege
-singularity
-skyhook
-stampede
-starfall
-steed
-stormcage
-trampoline
-vault
-vexswarm
-wildcard
-witherkiss"
+execute if score #pick surprise.roll matches 1 run data modify storage surprise:ctx pulse.name set value "alchemy"
+execute if score #pick surprise.roll matches 2 run data modify storage surprise:ctx pulse.name set value "anglers"
+execute if score #pick surprise.roll matches 3 run data modify storage surprise:ctx pulse.name set value "armory"
+execute if score #pick surprise.roll matches 4 run data modify storage surprise:ctx pulse.name set value "ascension"
+execute if score #pick surprise.roll matches 5 run data modify storage surprise:ctx pulse.name set value "beacon"
+execute if score #pick surprise.roll matches 6 run data modify storage surprise:ctx pulse.name set value "blessing"
+execute if score #pick surprise.roll matches 7 run data modify storage surprise:ctx pulse.name set value "bloom"
+execute if score #pick surprise.roll matches 8 run data modify storage surprise:ctx pulse.name set value "caravan"
+execute if score #pick surprise.roll matches 9 run data modify storage surprise:ctx pulse.name set value "chaos"
+execute if score #pick surprise.roll matches 10 run data modify storage surprise:ctx pulse.name set value "citadel"
+execute if score #pick surprise.roll matches 11 run data modify storage surprise:ctx pulse.name set value "companion"
+execute if score #pick surprise.roll matches 12 run data modify storage surprise:ctx pulse.name set value "creeperain"
+execute if score #pick surprise.roll matches 13 run data modify storage surprise:ctx pulse.name set value "deepfreeze"
+execute if score #pick surprise.roll matches 14 run data modify storage surprise:ctx pulse.name set value "excavation"
+execute if score #pick surprise.roll matches 15 run data modify storage surprise:ctx pulse.name set value "fireworkshow"
+execute if score #pick surprise.roll matches 16 run data modify storage surprise:ctx pulse.name set value "forge"
+execute if score #pick surprise.roll matches 17 run data modify storage surprise:ctx pulse.name set value "gateway"
+execute if score #pick surprise.roll matches 18 run data modify storage surprise:ctx pulse.name set value "gift"
+execute if score #pick surprise.roll matches 19 run data modify storage surprise:ctx pulse.name set value "goldrush"
+execute if score #pick surprise.roll matches 20 run data modify storage surprise:ctx pulse.name set value "greenhouse"
+execute if score #pick surprise.roll matches 21 run data modify storage surprise:ctx pulse.name set value "guardian"
+execute if score #pick surprise.roll matches 22 run data modify storage surprise:ctx pulse.name set value "infestation"
+execute if score #pick surprise.roll matches 23 run data modify storage surprise:ctx pulse.name set value "jukebox"
+execute if score #pick surprise.roll matches 24 run data modify storage surprise:ctx pulse.name set value "meteor"
+execute if score #pick surprise.roll matches 25 run data modify storage surprise:ctx pulse.name set value "mimic"
+execute if score #pick surprise.roll matches 26 run data modify storage surprise:ctx pulse.name set value "monument"
+execute if score #pick surprise.roll matches 27 run data modify storage surprise:ctx pulse.name set value "pedestal"
+execute if score #pick surprise.roll matches 28 run data modify storage surprise:ctx pulse.name set value "phantoms"
+execute if score #pick surprise.roll matches 29 run data modify storage surprise:ctx pulse.name set value "quicksand"
+execute if score #pick surprise.roll matches 30 run data modify storage surprise:ctx pulse.name set value "scatter"
+execute if score #pick surprise.roll matches 31 run data modify storage surprise:ctx pulse.name set value "shower"
+execute if score #pick surprise.roll matches 32 run data modify storage surprise:ctx pulse.name set value "shrink"
+execute if score #pick surprise.roll matches 33 run data modify storage surprise:ctx pulse.name set value "siege"
+execute if score #pick surprise.roll matches 34 run data modify storage surprise:ctx pulse.name set value "singularity"
+execute if score #pick surprise.roll matches 35 run data modify storage surprise:ctx pulse.name set value "skyhook"
+execute if score #pick surprise.roll matches 36 run data modify storage surprise:ctx pulse.name set value "stampede"
+execute if score #pick surprise.roll matches 37 run data modify storage surprise:ctx pulse.name set value "starfall"
+execute if score #pick surprise.roll matches 38 run data modify storage surprise:ctx pulse.name set value "steed"
+execute if score #pick surprise.roll matches 39 run data modify storage surprise:ctx pulse.name set value "stormcage"
+execute if score #pick surprise.roll matches 40 run data modify storage surprise:ctx pulse.name set value "trampoline"
+execute if score #pick surprise.roll matches 41 run data modify storage surprise:ctx pulse.name set value "vault"
+execute if score #pick surprise.roll matches 42 run data modify storage surprise:ctx pulse.name set value "vexswarm"
+execute if score #pick surprise.roll matches 43 run data modify storage surprise:ctx pulse.name set value "wildcard"
+execute if score #pick surprise.roll matches 44 run data modify storage surprise:ctx pulse.name set value "witherkiss"
 
 # every event unfolds in several beats rather than landing all at once
 execute store result storage surprise:ctx pulse.left int 1 run random value 2..6
