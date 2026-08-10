@@ -6,6 +6,12 @@ See the README for the layout and for what the chat prefixes mean.
 
 ## Invariants
 
+- **A turn is a Claude Code session, and chat is its terminal:**
+  Same model, same profile, same policy,
+  and anything that session would put in front of its operator reaches the player.
+  A failure only the journal hears is one nobody heard.
+  Chat has no scrollback, so bulk output stays in the journal
+  and chat carries the fact and where to look.
 - **A datapack reloads, `nix/` deploys:**
   A change under `datapacks/` is live as soon as the server reloads,
   while one under `nix/` reaches the host only once dotnix bumps its lock and deploys.

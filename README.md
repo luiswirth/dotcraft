@@ -11,19 +11,20 @@ This repository is also the checkout that bridge edits, at `/srv/dotcraft` there
 
 ## Chat
 
-Two prefixes, told apart by who is allowed to use them.
+    @claude give the compass a name and make it glow
 
-    @claude  what does the compass do here
-    @claude! give the compass a name and make it glow
-
-`@claude` answers, and anyone can ask.
-`@claude!` changes the datapacks, and only server operators can.
+Only server operators are answered.
 Privilege is read from the server's own `ops.json`,
 so `/op` and `/deop` are all there is to it.
 
 A change lands as a commit here, authored under the player who asked for it,
 followed by a `/reload`.
 Backing one out is `git revert` and another reload.
+
+One conversation runs until `@claude /clear` ends it.
+Slash commands reach it as they would a terminal, `@claude /commit` and
+`@claude /model sonnet` included; the ones that only run in the terminal
+interface, such as `/login`, do not.
 
 ## Layout
 

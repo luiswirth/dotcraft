@@ -5,8 +5,10 @@
 # MC_CONSOLE, CLAUDE_BIN, STATE_DIRECTORY. The working directory is the
 # dotcraft checkout.
 
-ask_prefix='@claude '
-dev_prefix='@claude! '
+prefix='@claude '
+
+# One conversation, for as long as nobody clears it.
+session="$STATE_DIRECTORY/session"
 
 # A turn that stops answering is indistinguishable from one still thinking, so
 # it is given a bound rather than a player waiting on it forever. The session
@@ -40,60 +42,36 @@ is_operator() {
   jq --exit-status --arg name "$1" 'any(.[]; .name == $name)' "$MC_OPS" >/dev/null 2>&1
 }
 
+# Who is speaking belongs here rather than in front of the message, which is
+# passed through untouched so that a slash command still leads the prompt.
 system_prompt() {
-  cat <<'EOF'
-You are in the chat of a private Minecraft server. The working directory holds
-its datapacks. Answer in at most three short lines of plain text, since chat
-renders no markdown.
-EOF
+  cat <<EOF
+You are in the chat of a private Minecraft server, talking to its operators.
+The working directory holds its datapacks and the module that runs the server.
+Answer in at most three short lines of plain text, since chat renders no
+markdown.
 
-  # The guidelines a session here inherits are written for pairing, and would
-  # have it wait for a go-ahead that chat has no way to give.
-  case $1 in
-    ask)
-      cat <<'EOF'
-You can read and answer, nothing else. Say so rather than attempting a change.
-EOF
-      ;;
-    dev)
-      cat <<'EOF'
-An operator asked for a change. Make it, without asking first. Run mcfn to act
-on the live world and edit a datapack for anything that must outlast it; the
+$1 is speaking. Act on what they ask without asking first. Run mcfn to act on
+the live world and edit a datapack for anything that must outlast it; the
 conventions for both are in CLAUDE.md. Do not reload or commit; that follows
 your turn. Say what changed and how to try it.
 EOF
-      ;;
-  esac
-}
-
-session_file() {
-  printf '%s/session-%s\n' "$STATE_DIRECTORY" "$1"
 }
 
 claude_turn() {
-  local tier=$1 prompt=$2
-  local session id output
-  session=$(session_file "$tier")
+  local player=$1 prompt=$2
+  local id output
   local -a options=(
     --print
     --output-format json
-    --append-system-prompt "$(system_prompt "$tier")"
+    --append-system-prompt "$(system_prompt "$player")"
+    # Chat is a terminal here, so a turn runs under the profile and policy a
+    # terminal session would. claude/managed-settings.json in dotnix is where a
+    # limit on it belongs, since its denials hold whatever the permission mode
+    # says.
+    --permission-mode bypassPermissions
   )
 
-  # A dev turn is a terminal session in everything but the chat around it: same
-  # model, same profile, same policy. The tailnet is the trust boundary, and
-  # claude/managed-settings.json in dotnix is where a limit on it belongs, since
-  # its denials hold whatever the permission mode says. The tier open to
-  # everyone else only reads.
-  case $tier in
-    ask) options+=(--allowedTools "Read,Grep,Glob") ;;
-    dev) options+=(--permission-mode bypassPermissions) ;;
-  esac
-
-  # The session is the privilege boundary, one conversation per tier: chat is a
-  # shared room, so a follow-up reads as one, but anybody may write into the ask
-  # context and a dev turn acts on its own with the server's full authority.
-  #
   # The bridge names the session rather than reading it back afterwards, so a
   # turn that is cut short still leaves one behind to resume.
   if [ -s "$session" ]; then
@@ -119,9 +97,7 @@ claude_turn() {
 
 # The bridge commits, pushes and reloads, not the model: the commit is what
 # makes a change revertible, the push is what makes it outlive the machine, and
-# the reload is what makes it visible without a restart. The push is the only
-# one of the three a player is not told about, being nobody's business but the
-# journal's when it fails.
+# the reload is what makes it visible without a restart.
 apply() {
   local player=$1 request=$2
   git add --all
@@ -129,36 +105,36 @@ apply() {
 
   git -c "user.name=$player" -c "user.email=$player@dotcraft" \
     commit --quiet --message "$request"
-  timeout 30 git push --quiet
+  timeout 30 git push --quiet ||
+    tell red "committed but not pushed, see journalctl -u dotcraft-bridge"
   printf 'reload\n' | console
   tell gray "reloaded"
 }
 
 handle() {
-  local player=$1 message=$2 tier prompt reply line
+  local player=$1 message=$2 prompt reply line
 
   case $message in
-    "$dev_prefix"*) tier=dev prompt=${message#"$dev_prefix"} ;;
-    "$ask_prefix"*) tier=ask prompt=${message#"$ask_prefix"} ;;
+    "$prefix"*) prompt=${message#"$prefix"} ;;
     *) return ;;
   esac
 
-  if [ "$tier" = dev ] && ! is_operator "$player"; then
+  if ! is_operator "$player"; then
     tell red "$player is not an operator"
     return
   fi
 
-  # A tier is one conversation for as long as nobody ends it, and chat spells
-  # ending one the way a terminal does.
+  # The session is this file, so clearing it is the bridge's own business.
+  # Every other slash command reaches Claude Code, which expands it.
   if [ "$prompt" = /clear ]; then
-    rm --force "$(session_file "$tier")"
-    tell gray "$tier session cleared"
+    rm --force "$session"
+    tell gray "session cleared"
     return
   fi
 
   tell gray "thinking"
   local status=0
-  reply=$(claude_turn "$tier" "$player asks: $prompt") || status=$?
+  reply=$(claude_turn "$player" "$prompt") || status=$?
   case $status in
     0) ;;
     124)
@@ -175,9 +151,7 @@ handle() {
     [ -n "$line" ] && tell white "$line"
   done <<<"$reply"
 
-  if [ "$tier" = dev ]; then
-    apply "$player" "$prompt"
-  fi
+  apply "$player" "$prompt"
 }
 
 journalctl --unit minecraft-server --follow --lines 0 --output cat |
