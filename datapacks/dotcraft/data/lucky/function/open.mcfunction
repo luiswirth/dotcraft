@@ -11,6 +11,15 @@ execute if score #roll lucky.roll matches 27..70 run function lucky:pool/common
 execute if score #roll lucky.roll matches 71..93 run function lucky:pool/rare
 execute if score #roll lucky.roll matches 94.. run function lucky:pool/legendary
 
+# every opening carries a chance of an unrelated procedural garnish,
+# so the same outcome never plays out twice the same way.
+execute store result score #flair lucky.roll run random value 1..3
+execute if score #flair lucky.roll matches 1 run function lucky:rand/effect
+execute store result score #flair lucky.roll run random value 1..4
+execute if score #flair lucky.roll matches 1 run function lucky:rand/mob
+execute store result score #flair lucky.roll run random value 1..3
+execute if score #flair lucky.roll matches 1 run function lucky:rand/loot
+
 # the pity counter stays bounded, so neither luck nor misfortune compounds forever.
 execute if score @s lucky.luck matches 41.. run scoreboard players set @s lucky.luck 40
 execute if score @s lucky.luck matches ..-11 run scoreboard players set @s lucky.luck -10
