@@ -69,6 +69,9 @@ in {
       ];
       serviceConfig = {
         ExecStart = lib.getExe scripts.dotcraft-claude;
+        # Where a running turn keeps the FIFO it can be reached on. Emptied at
+        # every start, so a turn cannot outlive the service that ran it.
+        RuntimeDirectory = "dotcraft-claude";
         User = cfg.user;
         WorkingDirectory = config.users.users.${cfg.user}.home;
         Restart = "always";
