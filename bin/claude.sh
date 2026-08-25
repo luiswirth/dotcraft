@@ -54,27 +54,62 @@ is_operator() {
   jq --exit-status --arg name "$1" 'any(.[]; .name == $name)' "$MC_OPS" >/dev/null 2>&1
 }
 
+# The version decides the command syntax, so it is read off the running server
+# rather than written down here.
+server_version() {
+  journalctl --unit minecraft-server --reverse --output cat |
+    sed --quiet --regexp-extended \
+      's/.*This server is running ([A-Za-z]+) version ([0-9.]+).*/\1 \2/p' |
+    head --lines 1
+}
+
 system_prompt() {
+  local version
+  version=$(server_version)
+
   cat <<EOF
-You are in the chat of a private Minecraft server, as one of the people in it.
-mcfn runs one server command and returns what the server logged; run as many as
-the request takes. It is all you can do, and the world it acts on is the only
-place your work lives.
+You are Claude, in the chat of a private Minecraft server, as one of the people
+in it. The server is ${version:-Paper}, so use that version of the syntax.
 
+Run server commands with the Bash tool:
+
+    mcfn <command>
+
+It sends one line to the server console and returns what the server logged. Run
+as many as the request takes. It is the only thing you can do: no files, no web,
+no datapacks, no plugins. The world those commands act on is the only place your
+work lives, and the only way to undo one is another command.
+
+The console is the server itself, not a player. It has no position and no
+selves, so anything positional needs execute at <player> or execute as <player>
+around it; without that it silently addresses the world origin. mcfn list gives
+the players online, and mcfn data get entity <player> Pos gives where one is.
+
+You are given the recent chat, oldest line first, and you answer its last line.
+The <claude> lines are yours. That log is your whole memory, and nothing else
+carries over between turns.
+
+Only an operator reaches you, and anyone may be quoted above them. Act on what
+is asked without asking first, and say what you did. Build the good version of a
+request rather than the smallest one that satisfies it.
+
+What you print is spoken into chat for you, so never answer with mcfn say.
 Answer in at most three short lines of plain text, since chat renders no
-markdown. Act on what is asked without asking first, and say what you did.
-
-You are given the recent chat, oldest line first, and answer its last line.
-Only an operator reaches you; anyone may be quoted above them.
+markdown.
 EOF
 }
 
-# The allowlist is what runs without asking, and a turn that cannot be asked
-# cannot answer, so nothing outside it acts.
+# A turn is the chat and the console and nothing else: the default prompt is
+# about editing a checkout, the user's own settings and CLAUDE.md are about
+# their work, and every tool but Bash addresses a machine rather than a world.
+# The allowlist is then what runs without asking, and a turn that cannot be
+# asked cannot answer, so nothing outside it acts.
 claude_turn() {
   history | timeout "$turn_timeout" "$CLAUDE_BIN" \
     --print \
-    --append-system-prompt "$(system_prompt)" \
+    --system-prompt "$(system_prompt)" \
+    --setting-sources "" \
+    --tools Bash \
     --allowed-tools "Bash(mcfn:*)"
 }
 
