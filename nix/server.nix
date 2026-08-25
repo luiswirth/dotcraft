@@ -22,14 +22,5 @@ in {
         spawn-protection = lib.mkDefault 0;
       };
     };
-
-    # network.target promises only that the stack is configured, so the server
-    # can win the race against a usable link and fail to fetch Mojang's chat
-    # signing key. It carries on unsigned, and marks every message it then
-    # cannot verify [Not Secure], for as long as it runs.
-    systemd.services.minecraft-server = {
-      wants = ["network-online.target"];
-      after = ["network-online.target"];
-    };
   };
 }
