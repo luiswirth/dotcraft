@@ -32,7 +32,7 @@ in {
         message = "services.dotcraft-claude reads a running minecraft-server.";
       }
       {
-        assertion = server.package == pkgs.papermc;
+        assertion = (server.package.pname or null) == "papermc";
         message = "services.dotcraft-claude parses Paper's chat log format.";
       }
     ];

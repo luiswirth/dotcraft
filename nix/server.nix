@@ -14,7 +14,7 @@ in {
       enable = true;
       eula = true;
       declarative = true;
-      package = lib.mkDefault pkgs.papermc;
+      package = lib.mkDefault (pkgs.callPackage ./papermc.nix {});
       jvmOpts = lib.mkDefault "-Xmx4G -Xms4G";
       serverProperties = {
         motd = lib.mkDefault "dotcraft";

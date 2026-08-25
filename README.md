@@ -29,5 +29,6 @@ which the server logs and Claude speaks into like anyone else.
     bin/claude.sh      the chat loop
     bin/mcfn.sh        one command to the console
     nix/server.nix     the server
+    nix/papermc.nix    the server jar, which nixpkgs no longer keeps current
     nix/claude.nix     the service running the chat loop
     nix/scripts.nix    what packages the two
