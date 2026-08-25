@@ -3,7 +3,6 @@
 # MC_OPS, MC_CONSOLE and CLAUDE_BIN arrive from the systemd unit.
 
 prefix='@claude'
-turn_timeout=180
 history_span=-1d
 history_lines=40
 
@@ -105,7 +104,7 @@ EOF
 # The allowlist is then what runs without asking, and a turn that cannot be
 # asked cannot answer, so nothing outside it acts.
 claude_turn() {
-  history | timeout "$turn_timeout" "$CLAUDE_BIN" \
+  history | "$CLAUDE_BIN" \
     --print \
     --system-prompt "$(system_prompt)" \
     --setting-sources "" \
@@ -127,7 +126,6 @@ handle() {
   reply=$(claude_turn) || status=$?
   case $status in
     0) printf '%s\n' "$reply" | say ;;
-    124) tell red "still going after ${turn_timeout}s, ask again" ;;
     *) tell red "no answer, see journalctl -u dotcraft-claude" ;;
   esac
 }
