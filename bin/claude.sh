@@ -123,7 +123,7 @@ EOF
 }
 
 # A turn is the chat and the console and nothing else: the default prompt is
-# about editing a checkout, the user's own settings and CLAUDE.md are about
+# about editing a checkout, the user's own settings and AGENTS.md are about
 # their work, and every tool but Bash addresses a machine rather than a world.
 # The allowlist is then what runs without asking, and a turn that cannot be
 # asked cannot answer, so nothing outside it acts.
