@@ -23,16 +23,6 @@ in {
         The user the service runs as, and whose Claude Code install it runs.
       '';
     };
-
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "${config.users.users.${cfg.user}.home}/.claude";
-      defaultText = lib.literalMD "`.claude` in the user's home";
-      description = ''
-        The Claude Code config directory the service runs against. An account
-        is a directory, so this option is which one it spends.
-      '';
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -95,7 +85,8 @@ in {
         # binary it installs is a generic-Linux one that needs nix-ld. A unit
         # gets neither from the session variables a login shell would read.
         CLAUDE_BIN = "${config.users.users.${cfg.user}.home}/.local/bin/claude";
-        CLAUDE_CONFIG_DIR = cfg.configDir;
+        # No CLAUDE_CONFIG_DIR: naming even the default path moves the account
+        # cache beside it, where the login never wrote.
         inherit (config.environment.sessionVariables) NIX_LD NIX_LD_LIBRARY_PATH;
       };
     };
