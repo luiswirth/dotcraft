@@ -27,7 +27,7 @@
 
     # Exposed so that the shell scripts get built, and so shellcheck runs on
     # them, without a host to deploy to.
-    packages.${system} = pkgs.callPackage ./nix/scripts.nix {};
+    packages.${system} = pkgs.callPackages ./nix/scripts.nix {};
 
     # The pre-commit hook checks a repository by running this, so a language
     # left out here is a language nothing checks.
