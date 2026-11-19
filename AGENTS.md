@@ -30,10 +30,10 @@ See the README for the layout.
   Blocks, entities and scoreboards outlive a restart and survive no revert.
   Nothing here can undo a command.
 - **`nix/` deploys:**
-  A change reaches the host only once dotnix bumps its lock,
+  A change reaches the host only once dothome bumps its lock,
   so nothing here is live the moment it is written.
   To try a change before that, build the host against this checkout:
-  `sudo nixos-rebuild switch --flake ~/dev/dotnix#lwirth-server --override-input dotcraft path:/srv/dotcraft`,
+  `sudo nixos-rebuild switch --flake ~/dev/dothome#lwirth-server --override-input dotcraft path:$HOME/dev/dotcraft`,
   where the `path:` form takes the working tree and a bare path takes the last commit.
 - **The console is the server, standing at the world origin:**
   It has no position and no selves,

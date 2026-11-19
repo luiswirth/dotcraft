@@ -6,7 +6,7 @@ Two NixOS modules, one per half.
 `services.dotcraft` is the server: Paper, and the settings this one runs with.
 `services.dotcraft-claude` is the chat, and reads a `services.minecraft-server`
 that anything may have configured.
-[dotnix](https://github.com/luiswirth/dotnix) imports them and names the host they run on.
+[dothome](https://github.com/luiswirth/dothome) imports them and names the host they run on.
 
 ## Chat
 
