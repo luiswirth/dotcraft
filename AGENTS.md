@@ -1,6 +1,9 @@
+---
+description: "A private Minecraft server, and Claude in its chat. Use when working on the Minecraft server or its Claude."
+---
+
 # dotcraft
 
-A private Minecraft server, and Claude in its chat.
 Two NixOS modules in `nix/`, one per half.
 See the README for the layout.
 
